@@ -14,7 +14,7 @@ import java.util.List;
 public class StatsClient {
     private final RestClient restClient;
 
-    // Создание клиента с использованием предоставленного RestClient
+    // Конструктор клиента для работы с сервисом статистики
     public StatsClient(RestClient restClient) {
         this.restClient = restClient;
     }
@@ -37,13 +37,14 @@ public class StatsClient {
             throw new IllegalArgumentException("Даты окончания должна быть позже даты начала");
         }
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder
                 .fromPath("/stats")
-                .queryParam("start", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-                .queryParam("end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                .queryParam("start", start.format(formatter))
+                .queryParam("end", end.format(formatter));
 
         if (uris != null && !uris.isEmpty()) {
-            uriComponentsBuilder.queryParam("uris", uris);
+            uriComponentsBuilder.queryParam("uris", String.join(",", uris));
         }
 
         if (unique != null) {
@@ -51,7 +52,7 @@ public class StatsClient {
         }
 
         return restClient.get()
-                .uri(uriComponentsBuilder.build().toUri())
+                .uri(uriComponentsBuilder.encode().toUriString())
                 .retrieve()
                 .body(new ParameterizedTypeReference<List<ViewStatsDto>>() {
                 });

@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class EndpointHitDto {
 
+    // Идентификатор записи
     private Long id;
 
     // Название микросервиса, отправившего запрос (обязательное поле)
