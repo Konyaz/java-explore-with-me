@@ -82,4 +82,8 @@ public class Event {
     @Column(name = "published_on")
     private LocalDateTime publishedOn;
 
+    // Причина модерации (например, почему событие отклонено)
+    @Column(name = "moderation_resolution", length = 1000)
+    private String moderationResolution;
+
 }

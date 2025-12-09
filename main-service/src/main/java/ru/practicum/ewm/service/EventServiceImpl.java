@@ -67,12 +67,12 @@ public class EventServiceImpl implements EventService {
 
     // Получение события для публичного доступа
     @Override
-    public EventFullDto getEvent(long eventId, String uri, String ip) {
+    public EventPublicFullDto getEvent(long eventId, String uri, String ip) {
         Event event = eventRepository.findByIdAndState(eventId, EventState.PUBLISHED)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Указанное событие ид=%s не найдено", eventId)));
 
         addHit(uri, ip);
-        return eventMapper.toEventFullDto(event, getEventView(eventId));
+        return eventMapper.toEventPublicFullDto(event, getEventView(eventId));
     }
 
     // Поиск событий для публичного доступа
@@ -225,6 +225,7 @@ public class EventServiceImpl implements EventService {
 
             if (stateAction == EventStateAction.SEND_TO_REVIEW) {
                 event.setState(EventState.PENDING);
+                // Можно добавить очистку предыдущей резолюции модерации
             } else if (stateAction == EventStateAction.CANCEL_REVIEW) {
                 event.setState(EventState.CANCELED);
             } else {
@@ -296,6 +297,19 @@ public class EventServiceImpl implements EventService {
                 }
                 event.setState(EventState.PUBLISHED);
                 event.setPublishedOn(LocalDateTime.now());
+                // Очищаем резолюцию модерации, раз опубликована - все замечания сняты
+                event.setModerationResolution(null);
+
+            } else if (updateStateAction == EventStateAction.RETURN_EVENT_FOR_MODIFY) {
+                if (state == EventState.PUBLISHED) {
+                    throw new ConflictDataException("вернуть опубликованное событие нельзя");
+                }
+                if (updateData.getModerationResolution() == null ||
+                        updateData.getModerationResolution().isBlank()) {
+                    throw new ValidationException("При возврате обязательно надо указывать причину");
+                }
+                event.setState(EventState.MODERATION_FAILED);
+                event.setModerationResolution(updateData.getModerationResolution());
 
             } else if (updateStateAction == EventStateAction.REJECT_EVENT) {
                 if (state == EventState.PUBLISHED) {

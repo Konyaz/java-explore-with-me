@@ -50,4 +50,7 @@ public class EventUpdateAdminDto {
 
     // Действие администратора для изменения статуса события (необязательно)
     private EventStateAction stateAction;
+
+    // Причина модерации (например, почему событие отклонено)
+    private String moderationResolution;
 }
