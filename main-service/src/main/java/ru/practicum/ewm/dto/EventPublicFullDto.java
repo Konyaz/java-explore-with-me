@@ -1,7 +1,6 @@
 package ru.practicum.ewm.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -11,7 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventFullDto {
+public class EventPublicFullDto {
 
     // Идентификатор события
     private long id;
@@ -63,9 +62,5 @@ public class EventFullDto {
     // Дата и время публикации события (формат: ГГГГ-ММ-ДД ЧЧ:ММ:СС)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;
-
-    // Причина модерации (только для администратора, может быть null)
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String moderationResolution;
 
 }

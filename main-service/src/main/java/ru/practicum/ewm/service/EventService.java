@@ -12,7 +12,7 @@ public interface EventService {
     EventFullDto addEvent(long userId, EventCreateDto eventCreateDto);
 
     // Получение полной информации о событии для публичного доступа
-    EventFullDto getEvent(long eventId, String uri, String ip);
+    EventPublicFullDto getEvent(long eventId, String uri, String ip);
 
     // Получение событий для публичного доступа с фильтрацией
     List<EventShortDto> getEvents(
@@ -29,7 +29,7 @@ public interface EventService {
             String ip
     );
 
-    // Получение события пользователя по ID
+    // Получение события пользователя по ID (приватный доступ)
     EventFullDto getUserEvent(long userId, long eventId);
 
     // Получение всех событий пользователя с пагинацией
